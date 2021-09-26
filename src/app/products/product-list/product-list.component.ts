@@ -40,9 +40,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
 
     this.storSub = this.store.select("products").subscribe((products) => {
-      if (products) {
-        this.displayCode = products.showProductsCode;
-      }
+      products && (this.displayCode = products.showProductsCode);
     });
   }
 
