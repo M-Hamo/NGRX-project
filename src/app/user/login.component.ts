@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { Observable, Subscription } from "rxjs";
-import { filter, map, tap } from "rxjs/operators";
+import { Observable } from "rxjs";
 
 import { AuthService } from "./auth.service";
+import { getMaskUserName, State } from "./user.reducer";
 
 @Component({
   templateUrl: "./login.component.html",
@@ -15,15 +15,12 @@ export class LoginComponent implements OnInit {
   pageTitle = "Log In";
 
   // Declarative abroach
-  maskUserName$: Observable<boolean> = this._store.select("users").pipe(
-    filter((users) => !!users),
-    map((users: any) => users.maskUserName)
-  );
+  maskUserName$: Observable<boolean> = this._store.select(getMaskUserName);
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private _store: Store<any>
+    private _store: Store<State>
   ) {}
 
   ngOnInit(): void {}
