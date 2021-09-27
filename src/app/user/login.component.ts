@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
+import { filter, map, tap } from "rxjs/operators";
 
 import { AuthService } from "./auth.service";
 
@@ -10,12 +11,14 @@ import { AuthService } from "./auth.service";
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.css"],
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent implements OnInit {
   pageTitle = "Log In";
 
-  maskUserName: boolean;
-
-  sub: Subscription;
+  // Declarative abroach
+  maskUserName$: Observable<boolean> = this._store.select("users").pipe(
+    filter((users) => !!users),
+    map((users: any) => users.maskUserName)
+  );
 
   constructor(
     private authService: AuthService,
@@ -23,15 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private _store: Store<any>
   ) {}
 
-  ngOnInit(): void {
-    this.sub = this._store.select("users").subscribe((users) => {
-      users && (this.maskUserName = users.maskUserName);
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
-  }
+  ngOnInit(): void {}
 
   cancel(): void {
     this.router.navigate(["welcome"]);
