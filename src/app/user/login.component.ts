@@ -5,7 +5,8 @@ import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
 
 import { AuthService } from "./auth.service";
-import { getMaskUserName, State } from "./user.reducer";
+import { getMaskUserName, State } from "./satate-manager/user.reducer";
+import * as UserAction from "./satate-manager/user.action";
 
 @Component({
   templateUrl: "./login.component.html",
@@ -30,9 +31,7 @@ export class LoginComponent implements OnInit {
   }
 
   checkChanged(): void {
-    this._store.dispatch({
-      type: "[User] MaskUserName",
-    });
+    this._store.dispatch(UserAction.maskUserName());
   }
 
   login(loginForm: NgForm): void {

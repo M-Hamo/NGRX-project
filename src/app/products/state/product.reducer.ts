@@ -1,5 +1,4 @@
 import {
-  createAction,
   createFeatureSelector,
   createReducer,
   createSelector,
@@ -19,12 +18,14 @@ export interface ProductState {
   showProductsCode: boolean;
   currentProduct: Product;
   products: Product[];
+  error: string;
 }
 
 const initialState: ProductState = {
   showProductsCode: false,
   currentProduct: null,
   products: [],
+  error: null,
 };
 
 // create selector
@@ -45,6 +46,11 @@ export const getCurrentProduct = createSelector(
 export const getProducts = createSelector(
   getProductFeatureState,
   (state) => state.products
+);
+
+export const getError = createSelector(
+  getProductFeatureState,
+  (state) => state.error
 );
 
 export const productReducer = createReducer<ProductState>(
@@ -79,6 +85,20 @@ export const productReducer = createReducer<ProductState>(
         description: "",
         starRating: 0,
       },
+    };
+  }),
+  on(ProductsActions.loadProductsSuccess, (state, action): ProductState => {
+    return {
+      ...state,
+      products: action.products,
+      error: null,
+    };
+  }),
+  on(ProductsActions.loadProductsFailure, (state, action): ProductState => {
+    return {
+      ...state,
+      products: [],
+      error: action.error,
     };
   })
 );

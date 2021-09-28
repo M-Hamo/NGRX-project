@@ -11,6 +11,7 @@ import { Store } from "@ngrx/store";
 import { State } from "src/app/app.state";
 import { getCurrentProduct } from "../state/product.reducer";
 import * as ProductsActions from "../state/product.actions";
+import { tap } from "rxjs/operators";
 
 @Component({
   selector: "pm-product-edit",
@@ -21,7 +22,9 @@ export class ProductEditComponent implements OnInit {
   errorMessage = "";
   productForm: FormGroup;
 
-  product: Product | null;
+  product$: Observable<Product | null> = this._store
+    .select(getCurrentProduct)
+    .pipe(tap((product) => this.displayProduct(product)));
 
   // Use with the generic validation message class
   displayMessage: { [key: string]: string } = {};
@@ -93,8 +96,6 @@ export class ProductEditComponent implements OnInit {
   }
 
   displayProduct(product: Product | null): void {
-    // Set the local product property
-    this.product = product;
     if (product) {
       // Reset the form back to pristine
       this.productForm.reset();

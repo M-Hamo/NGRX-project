@@ -7,6 +7,8 @@ import { Product } from "../product";
 import { ProductService } from "../product.service";
 import {
   getCurrentProduct,
+  getError,
+  getProducts,
   getShowProductCode,
   State,
 } from "../state/product.reducer";
@@ -20,11 +22,11 @@ import * as ProductsActions from "../state/product.actions";
 })
 export class ProductListComponent implements OnInit {
   pageTitle = "Products";
-  errorMessage: string;
+  errorMessage$: Observable<string> = this._store.select(getError);
   // Declarative abroach
   displayCode$: Observable<boolean> = this._store.select(getShowProductCode);
 
-  products: Product[];
+  products$: Observable<Product[]> = this._store.select(getProducts);
 
   // getCurrentProduct
 
@@ -36,14 +38,15 @@ export class ProductListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this._store.dispatch(ProductsActions.loadProducts());
     // this.sub = this.productService.selectedProductChanges$.subscribe(
     //   (currentProduct) => (this.selectedProduct = currentProduct)
     // );
 
-    this.productService.getProducts().subscribe({
-      next: (products: Product[]) => (this.products = products),
-      error: (err) => (this.errorMessage = err),
-    });
+    // this.productService.getProducts().subscribe({
+    //   next: (products: Product[]) => (this.products = products),
+    //   error: (err) => (this.errorMessage = err),
+    // });
   }
 
   // "[Product] Cash Products"
