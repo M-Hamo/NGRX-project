@@ -1,66 +1,35 @@
-import { Component, OnInit } from "@angular/core";
-import { Store } from "@ngrx/store";
-
-import { Observable, Subscription } from "rxjs";
-
-import { Product } from "../product";
-import { ProductService } from "../product.service";
 import {
-  getCurrentProduct,
-  getError,
-  getProducts,
-  getShowProductCode,
-  State,
-} from "../state/product.reducer";
-
-import * as ProductsActions from "../state/product.actions";
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
+import { Product } from "../product";
 
 @Component({
   selector: "pm-product-list",
   templateUrl: "./product-list.component.html",
   styleUrls: ["./product-list.component.css"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent {
   pageTitle = "Products";
-  errorMessage$: Observable<string> = this._store.select(getError);
-  // Declarative abroach
-  displayCode$: Observable<boolean> = this._store.select(getShowProductCode);
+  @Input() products: Product[];
+  @Input() selectedProduct: Product;
+  @Input() displayCode: boolean;
+  @Input() errorMessage: string;
+  @Output() _productSelected = new EventEmitter();
+  @Output() _checkChanged = new EventEmitter();
+  @Output() _newProduct = new EventEmitter();
 
-  products$: Observable<Product[]> = this._store.select(getProducts);
-
-  // getCurrentProduct
-
-  selectedProduct$: Observable<Product> = this._store.select(getCurrentProduct);
-
-  constructor(
-    private productService: ProductService,
-    private _store: Store<State>
-  ) {}
-
-  ngOnInit(): void {
-    this._store.dispatch(ProductsActions.loadProducts());
-    // this.sub = this.productService.selectedProductChanges$.subscribe(
-    //   (currentProduct) => (this.selectedProduct = currentProduct)
-    // );
-
-    // this.productService.getProducts().subscribe({
-    //   next: (products: Product[]) => (this.products = products),
-    //   error: (err) => (this.errorMessage = err),
-    // });
+  productSelected(prod: Product): void {
+    this._productSelected.emit(prod);
   }
-
-  // "[Product] Cash Products"
   checkChanged(): void {
-    this._store.dispatch(ProductsActions.toggleProductCode());
+    this._checkChanged.emit();
   }
-
   newProduct(): void {
-    this._store.dispatch(ProductsActions.InitializeCurrentProduct());
-  }
-
-  productSelected(product: Product): void {
-    this._store.dispatch(
-      ProductsActions.setCurrentProduct({ currentProductId: product.id })
-    );
+    this._newProduct.emit();
   }
 }
