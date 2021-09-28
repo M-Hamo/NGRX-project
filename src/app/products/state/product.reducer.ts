@@ -16,14 +16,14 @@ export interface State extends AppState.State {
 
 export interface ProductState {
   showProductsCode: boolean;
-  currentProduct: Product;
+  currentProductId: number | null;
   products: Product[];
   error: string;
 }
 
 const initialState: ProductState = {
   showProductsCode: false,
-  currentProduct: null,
+  currentProductId: null,
   products: [],
   error: null,
 };
@@ -38,9 +38,29 @@ export const getShowProductCode = createSelector(
   (state) => state.showProductsCode
 );
 
+export const getCurrentProductId = createSelector(
+  getProductFeatureState,
+  (state) => state.currentProductId
+);
+
 export const getCurrentProduct = createSelector(
   getProductFeatureState,
-  (state) => state.currentProduct
+  getCurrentProductId,
+  (state, currentProductId): Product => {
+    if (currentProductId === 0) {
+      return {
+        id: 0,
+        productName: "new",
+        productCode: null,
+        description: "",
+        starRating: 0,
+      };
+    } else {
+      return currentProductId
+        ? state.products.find((p) => p.id === currentProductId)
+        : null;
+    }
+  }
 );
 
 export const getProducts = createSelector(
@@ -66,25 +86,19 @@ export const productReducer = createReducer<ProductState>(
   on(ProductsActions.setCurrentProduct, (state, action): ProductState => {
     return {
       ...state,
-      currentProduct: action.product,
+      currentProductId: action.currentProductId,
     };
   }),
   on(ProductsActions.clearCurrentProduct, (state): ProductState => {
     return {
       ...state,
-      currentProduct: null,
+      currentProductId: null,
     };
   }),
   on(ProductsActions.InitializeCurrentProduct, (state): ProductState => {
     return {
       ...state,
-      currentProduct: {
-        id: 0,
-        productName: "",
-        productCode: "New",
-        description: "",
-        starRating: 0,
-      },
+      currentProductId: 0,
     };
   }),
   on(ProductsActions.loadProductsSuccess, (state, action): ProductState => {

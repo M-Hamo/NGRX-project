@@ -5,7 +5,7 @@ export const toggleProductCode = createAction("[Product] Toggle product code");
 
 export const setCurrentProduct = createAction(
   "[Product] Set Current product",
-  props<{ product: Product }>()
+  props<{ currentProductId: number }>()
 );
 
 export const clearCurrentProduct = createAction(
