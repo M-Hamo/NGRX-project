@@ -20,7 +20,7 @@ import { tap } from "rxjs/operators";
 export class ProductEditComponent implements OnInit {
   pageTitle = "Product Edit";
   errorMessage = "";
-  productForm: FormGroup
+  productForm: FormGroup;
 
   product$: Observable<Product | null> = this._store
     .select(getCurrentProduct)
