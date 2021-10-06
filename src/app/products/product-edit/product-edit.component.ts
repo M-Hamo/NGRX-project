@@ -167,4 +167,4 @@ export class ProductEditComponent implements OnInit {
       }
     }
   }
-}
+};
